@@ -8,6 +8,9 @@ load_dotenv()  # Load environment variables from .env file
 api_key_gemini = os.getenv("Google_API_Key")
 api_key_groq = os.getenv("Groq_API_Key")
 
+print("Gemini Key:", api_key_gemini)
+print("Groq Key:", api_key_groq)
+
 
 def get_gemini():
     return ChatGoogleGenerativeAI(
