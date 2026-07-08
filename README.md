@@ -1,48 +1,38 @@
 # 🤖 Personal RAG Chatbot
 
-An end-to-end multilingual Retrieval-Augmented Generation (RAG) chatbot that enables users to upload their own documents and ask natural language questions. The system retrieves the most relevant document chunks using semantic search with FAISS and Hugging Face Embeddings, then generates context-aware answers using Google Gemini with automatic fallback to Groq Llama.
+A multilingual Retrieval-Augmented Generation (RAG) chatbot that allows users to upload their own documents and ask questions in natural language. The application retrieves the most relevant document chunks using FAISS semantic search and generates context-aware answers using Google Gemini with automatic fallback to Groq.
 
 ---
 
 ## ✨ Features
 
-- 📄 Upload multiple documents (PDF, DOCX, TXT)
-- 🌍 Multilingual semantic search
-- 🔎 FAISS Vector Database
-- 🧠 Hugging Face Embeddings (multilingual-e5-small)
-- 🤖 Google Gemini 2.5 Flash
-- 🔄 Automatic fallback to Groq Llama
-- 💬 Conversational Memory
-- 📝 Prompt Engineering
-- ⚡ Streamlit Interactive UI
-- 🚫 Reduced hallucinations by approximately **35%** through retrieval optimization and prompt engineering
+- Upload multiple document formats:
+  - PDF
+  - DOCX
+  - TXT
+- Automatic document loading
+- Recursive text chunking
+- Semantic search using FAISS
+- Hugging Face multilingual embeddings
+- Conversational memory
+- Prompt engineering for grounded responses
+- Google Gemini integration
+- Automatic fallback to Groq when Gemini is unavailable
+- Interactive Streamlit interface
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
-### Frontend
-- Streamlit
-
-### Backend
 - Python
+- Streamlit
 - LangChain
-
-### Vector Database
 - FAISS
-
-### Embedding Model
-- Hugging Face
-- intfloat/multilingual-e5-small
-
-### Large Language Models
-- Google Gemini 2.5 Flash
-- Groq (Llama 3.3 70B)
-
-### Document Processing
+- Hugging Face Embeddings
+- Google Gemini
+- Groq
 - PyPDF
 - Docx2txt
-- RecursiveCharacterTextSplitter
 
 ---
 
@@ -62,61 +52,44 @@ src/
 │
 ├── temp/
 │
-├── .env
-│
-└── requirements.txt
+├── requirements.txt
+└── .env
 ```
 
 ---
 
-## ⚙️ How It Works
-
-1. Upload one or more documents.
-2. Documents are loaded and split into smaller chunks.
-3. Chunks are converted into vector embeddings.
-4. Embeddings are stored inside a FAISS vector database.
-5. User asks a question.
-6. FAISS retrieves the most relevant chunks.
-7. Conversation history is added.
-8. A prompt is generated.
-9. Gemini generates the answer.
-10. If Gemini is unavailable, the system automatically switches to Groq Llama.
-
----
-
-## 🧠 Architecture
+## ⚙️ Workflow
 
 ```
-Documents
-      │
-      ▼
+Upload Documents
+        │
+        ▼
 Document Loader
-      │
-      ▼
+        │
+        ▼
 Text Splitter
-      │
-      ▼
-Embeddings
-      │
-      ▼
+        │
+        ▼
+Hugging Face Embeddings
+        │
+        ▼
 FAISS Vector Store
-      │
-      ▼
-Retriever
-      │
-      ▼
+        │
+        ▼
+Similarity Search
+        │
+        ▼
+Conversation History
+        │
+        ▼
 Prompt Builder
-      │
-      ▼
+        │
+        ▼
 Gemini
-      │
-      ▼
-Fallback
-      │
-      ▼
-Groq Llama
-      │
-      ▼
+   │
+   └──────────────► Groq (Fallback)
+        │
+        ▼
 Final Answer
 ```
 
@@ -127,7 +100,7 @@ Final Answer
 Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/Personal-RAG-Chatbot.git
+git clone https://github.com/YourUsername/Personal-RAG-Chatbot.git
 ```
 
 Move into the project
@@ -170,13 +143,12 @@ Create a `.env` file.
 
 ```env
 Google_API_Key=YOUR_GEMINI_API_KEY
-
 Groq_API_Key=YOUR_GROQ_API_KEY
 ```
 
 ---
 
-## ▶️ Run the Application
+## ▶️ Run
 
 ```bash
 streamlit run src/app.py
@@ -184,32 +156,18 @@ streamlit run src/app.py
 
 ---
 
-## 📸 Demo
+## 💬 How It Works
 
-### Upload Documents
-
-_Add screenshot here_
-
-### Ask Questions
-
-_Add screenshot here_
-
-### Generated Answer
-
-_Add screenshot here_
-
----
-
-## 📈 Future Improvements
-
-- Hybrid Search (BM25 + FAISS)
-- Cross Encoder Reranking
-- Query Rewriting
-- Source Citation
-- Streaming Responses
-- Persistent Chat Memory
-- Multi-user Authentication
-- Docker Deployment
+1. Upload one or more documents.
+2. Documents are loaded and split into chunks.
+3. Chunks are converted into embeddings.
+4. Embeddings are stored inside a FAISS vector database.
+5. The user asks a question.
+6. FAISS retrieves the most relevant chunks.
+7. Conversation history is added to the prompt.
+8. The prompt is sent to Gemini.
+9. If Gemini is unavailable, the application automatically switches to Groq.
+10. The generated answer is displayed in the chat interface.
 
 ---
 
@@ -219,12 +177,11 @@ _Add screenshot here_
 - Prompt Engineering
 - Semantic Search
 - Vector Databases
-- Large Language Models
+- Conversational AI
 - LangChain
-- Streamlit
 - FAISS
 - Hugging Face Embeddings
-- Conversational AI
+- Streamlit
 
 ---
 
@@ -232,5 +189,4 @@ _Add screenshot here_
 
 **Mohammed Mahdi**
 
-LinkedIn:
-https://www.linkedin.com/in/mohammed-el-mahdi-670aaa205?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app
+- LinkedIn: [https://linkedin.com/in/your-profile](https://www.linkedin.com/in/mohammed-el-mahdi-670aaa205?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
