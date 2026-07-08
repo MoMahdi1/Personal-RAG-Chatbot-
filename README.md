@@ -1,5 +1,7 @@
 # 🤖 Personal RAG Chatbot
 
+🔗 **Live Demo:** [https://your-app.streamlit.app](https://wrmgxereagvyawpb6dffa7.streamlit.app/)
+
 A multilingual Retrieval-Augmented Generation (RAG) chatbot that allows users to upload their own documents and ask questions in natural language. The application retrieves the most relevant document chunks using FAISS semantic search and generates context-aware answers using Google Gemini with automatic fallback to Groq.
 
 ---
