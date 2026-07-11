@@ -3,6 +3,7 @@ import os
 from modules import loader
 from modules import llm
 from modules import prompt
+from modules import intent
 
 st.set_page_config(
     page_title="Personal RAG Chatbot",
@@ -11,13 +12,19 @@ st.set_page_config(
 )
 
 # ---------------- Session State ---------------- #
+# ---------------- Session State ---------------- #
 
 if "all_docs" not in st.session_state:
     st.session_state.all_docs = []
 
-
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+
+if "embedding_model" not in st.session_state:
+    st.session_state.embedding_model = None
+
+if "vector_db" not in st.session_state:
+    st.session_state.vector_db = None
 # ---------------- Header ---------------- #
 
 st.markdown(
@@ -58,7 +65,7 @@ with col1:
 
         with col_1:
             loadbutton = st.button(
-                "📥 Load",
+                "📥 Process",
                 use_container_width=True
             )
 
@@ -80,6 +87,10 @@ with col1:
 
     if clearbutton:
         st.session_state.all_docs = []
+        st.session_state.chat_history = []
+        st.session_state.embedding_model = None
+        st.session_state.vector_db = None
+
         st.rerun()
 
     if loadbutton and files:
@@ -101,7 +112,6 @@ with col1:
 
             st.session_state.all_docs.extend(chunks)
 
-            # حذف الملف المؤقت
             os.remove(temp_path)
 
         # إنشاء موديل الـ Embeddings
@@ -112,6 +122,10 @@ with col1:
             st.session_state.all_docs,
             embeddings_model
         )
+
+        # حفظه في الـ Session
+        st.session_state.embedding_model = embeddings_model
+        st.session_state.vector_db = vector_db
 
         # حفظ قاعدة البيانات
         loader.save_vectorstore(vector_db)
@@ -130,10 +144,10 @@ with col2:
 
     st.subheader("🤖 How Can I Help?")
 
-    
     for chat in st.session_state.chat_history:
         with st.chat_message("user"):
             st.write(chat["question"])
+
         with st.chat_message("assistant"):
             st.write(chat["answer"])
 
@@ -141,31 +155,50 @@ with col2:
 
     if question:
 
-        # تحميل موديل الـ Embeddings
-        embedding_model = loader.embedding_documents()
+        # Greeting
+        if intent.is_greeting(question):
 
-        # تحميل قاعدة بيانات FAISS
-        vector_db = loader.load_vectorstore(embedding_model)
+            answer = intent.greeting_response()
 
-        # البحث عن أكثر 3 أجزاء تشابهًا
+            st.session_state.chat_history.append({
+                "question": question,
+                "answer": answer
+            })
+
+            st.rerun()
+
+        # تحميل الـ Vector DB مرة واحدة فقط
+        if st.session_state.vector_db is None:
+
+            embedding_model = loader.embedding_documents()
+
+            vector_db = loader.load_vectorstore(embedding_model)
+
+            st.session_state.embedding_model = embedding_model
+            st.session_state.vector_db = vector_db
+
+        vector_db = st.session_state.vector_db
+
+        # البحث عن أكثر 5 أجزاء تشابهًا
         retriever = vector_db.as_retriever(
             search_type="similarity",
             search_kwargs={"k": 5}
         )
+
         results = retriever.invoke(question)
 
         # إنشاء الـ Context
         context = "\n\n".join(
             [doc.page_content for doc in results]
         )
-        
-        history =""
+
+        history = ""
 
         for chat in st.session_state.chat_history[-10:]:
-          history +=(
-            f"User: {chat['question']}\n"
-            f"Assistant: {chat['answer']}\n\n"
-             )
+            history += (
+                f"User: {chat['question']}\n"
+                f"Assistant: {chat['answer']}\n\n"
+            )
 
         # إنشاء الـ Prompt
         final_prompt = prompt.build_prompt(
@@ -173,20 +206,12 @@ with col2:
             history=history,
             question=question
         )
-        
+
         response, model_used = llm.invoke_with_fallback(final_prompt)
-        st.caption(f"Model used: {model_used}")
-        
+
         st.session_state.chat_history.append({
             "question": question,
             "answer": response.content
         })
 
-        # عرض السؤال
-        st.subheader("❓ Question")
-        st.write(question)
-
-        # عرض الإجابة
-        st.subheader("🤖 Answer")
-        st.write(response.content)
-      
+        st.rerun()
